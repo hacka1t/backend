@@ -1,7 +1,7 @@
 const TICKS_PER_SECOND = 50
 
 const secondsToTicks = seconds => Math.round(seconds * TICKS_PER_SECOND)
-
+//
 // const SAMPLE_GAME_STATE = {
 //     // parameters
 //     maxTracks: 8,
@@ -104,6 +104,7 @@ class Game {
                     .find(enemy => enemy.position <= projectile.position)
                 if(enemyHit) {
                     this.enemies = this.enemies.filter(e => e.id !== enemyHit.id)
+                    this.score += 1
                     return false
                 }
 

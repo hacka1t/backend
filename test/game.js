@@ -196,14 +196,16 @@ function gameTickTests() {
     // shouldRemoveEnemiesThatHitThePlayer()
 
     function shouldRemoveEnemiesAndProjectilesOnHit() {
-        console.log("  Should remove enemies")
+        console.log("  Should remove enemies and projectiles when hit, also increment player score")
         let game = new Game()
         game.enemies = [{ position: 0.5, speed: 0.01, track: 0, id: 'enemy1' }]
         game.projectiles = [{ position: 0.45, speed: 0.5, track: 0, id: 'proj1' }]
+        let previousScore = game.score
         game._gameTick()
         try {
             assert.strictEqual(game.enemies.length, 0)
             assert.strictEqual(game.projectiles.length, 0)
+            assert.strictEqual(game.score, previousScore + 1)
             console.log("     Ok!")
         } catch(e) {
             console.error(e)
