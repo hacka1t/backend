@@ -183,11 +183,11 @@ function gameTickTests() {
         let game = new Game()
         game.spawnEnemy(0, 10)
         let oldEnemiesLength = game.enemies.length
-        let oldPlayerLife   = game.playerLifes
+        let oldPlayerLife   = game.playerLives
         game._gameTick()
         try {
             assert.strictEqual(game.enemies.length, oldEnemiesLength - 1)
-            assert.strictEqual(game.playerLifes, oldPlayerLife - 1)
+            assert.strictEqual(game.playerLives, oldPlayerLife - 1)
             console.log('    Ok!')
         } catch (e) {
             console.error(e)

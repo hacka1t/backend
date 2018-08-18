@@ -1,37 +1,14 @@
 const TICKS_PER_SECOND = 50
-
 const secondsToTicks = seconds => Math.round(seconds * TICKS_PER_SECOND)
-//
-// const SAMPLE_GAME_STATE = {
-//     // parameters
-//     maxTracks: 8,
-//     maxLifes: 3,
-//     intervalBetweenShots: 0.2,
-//     projectileSpeed: 2,
-//
-//     // game state
-//     playerLifes: 2,
-//     playerTrack: 0, // which track the player is looking at
-//     playerShotCooldown: 0, // amount of ticks before allowed to shoot again (can shoot if 0)
-//     projectiles: [ // array of current projectiles
-//         { track: 1, position: 0.5, id: 'projectile1' },
-//         { track: 3, position: 0.3, id: 'projectile2' }
-//     ],
-//     enemies: [
-//         { track: 1, position: 0.8, speed: 0.4, id: 'enemy1' },
-//         { track: 4, position: 0.2, speed: 0.3, id: 'enemy2' }
-//     ],
-//     tick: 15,
-//     score: 30
-// }
 
 class Game {
-    constructor(tracks = 8, shotInterval = 0.2, maxLifes = 3) {
+    constructor(tracks = 8, shotInterval = 0.2, maxLives = 3) {
         this.maxTracks = tracks
+        this.maxLives = maxLives
         this.intervalBetweenShots = shotInterval
         this.projectileSpeed = 2 / TICKS_PER_SECOND
 
-        this.playerLifes = maxLifes
+        this.playerLives = maxLives
         this.playerTrack = 0
         // TODO: player movement cooldown
         this.playerShotCooldown = 0
@@ -43,6 +20,26 @@ class Game {
         this.turnRight = this.turnRight.bind(this)
         this.turnLeft = this.turnLeft.bind(this)
         this.shoot = this.shoot.bind(this)
+        this.getState = this.getState.bind(this)
+    }
+
+    getState() {
+        return {
+            // parameters
+            maxTracks: this.maxTracks,
+            maxLives: this.maxLives,
+            intervalBetweenShots: this.intervalBetweenShots,
+            projectileSpeed: this.projectileSpeed,
+
+            // game state
+            playerLives: this.playerLives,
+            playerTrack: this.playerTrack, // which track the player is looking at
+            playerShotCooldown: this.playerShotCooldown, // amount of ticks before allowed to shoot again (can shoot if 0)
+            projectiles: this.projectiles,
+            enemies: this.enemies,
+            tick: this.tick,
+            score: this.score
+        }
     }
 
     turnRight() {
@@ -112,7 +109,7 @@ class Game {
             }
         )
 
-        let lives = this.playerLifes
+        let lives = this.playerLives
         this.enemies = this.enemies.filter(
             function(enemy){
                 if(enemy.position > 0) return true
@@ -121,7 +118,7 @@ class Game {
                 return false
             }
         )
-        this.playerLifes = lives
+        this.playerLives = lives
         this.tick += 1
     }
 
