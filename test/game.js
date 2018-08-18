@@ -16,6 +16,21 @@ function shouldTurnRight() {
 }
 shouldTurnRight()
 
+function shouldNotTurnRight() {
+    console.log("Should not turn right if on cooldown")
+    let game = new Game()
+    let initialPosition = game.playerTrack
+    game.playerMoveCooldown = 1
+    game.turnRight()
+    try {
+        assert.strictEqual(game.playerTrack, initialPosition)
+        console.log("  Ok!")
+    } catch (e) {
+        console.error(e)
+    }
+}
+shouldNotTurnRight()
+
 function shouldTurnRightLastPosition() {
     console.log("Should turn right from last position")
     let game = new Game()
@@ -47,6 +62,22 @@ function shouldTurnLeft() {
     }
 }
 shouldTurnLeft()
+
+function shouldNotTurnLeft() {
+    console.log("Should not turn left if on cooldown")
+    let game = new Game()
+    game.playerTrack = game.maxTracks - 1
+    let initialPosition = game.playerTrack
+    game.playerMoveCooldown = 1
+    game.turnLeft()
+    try {
+        assert.strictEqual(game.playerTrack, initialPosition)
+        console.log("  Ok!")
+    } catch (e) {
+        console.error(e)
+    }
+}
+shouldNotTurnLeft()
 
 function shouldTurnLeftFirstPosition() {
     console.log("Should turn left from position 0")

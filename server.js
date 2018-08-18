@@ -1,17 +1,18 @@
 // create server connection
-const Game = require('./game.js')
+const Game = require('./game.js').HigherOrder
 let app = require('express')()
 let http = require('http').Server(app)
 let io = require('socket.io')(http)
-let port = process.env.PORT || 3000
+let port = process.env.PORT || 3001
 
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/testClient.html')
 })
 
 io.on('connection', function(socket){
+    let game = Game()
     socket.on('start', function(msg){
-        let game = new Game()
+        game.start()
         socket.emit('gameState', game.getState())
         socket.on('turnLeft', function() {
             game.turnLeft()
@@ -25,8 +26,10 @@ io.on('connection', function(socket){
             game.shoot()
             socket.emit('gameState', game.getState())
         })
-        setInterval(function(){
-            socket.emit('gameState', game.getState())
+        let i = setInterval(function(){
+            let gameState = game.getState()
+            socket.emit('gameState', gameState)
+            if(gameState.playerLives <= 0) clearInterval(i)
         }, 20)
     })
 })

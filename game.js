@@ -6,12 +6,13 @@ class Game {
         this.maxTracks = tracks
         this.maxLives = maxLives
         this.intervalBetweenShots = shotInterval
+        this.intervalBetweenPlayerMovement = 0.1
         this.projectileSpeed = 2 / TICKS_PER_SECOND
 
         this.playerLives = maxLives
         this.playerTrack = 0
-        // TODO: player movement cooldown
         this.playerShotCooldown = 0
+        this.playerMoveCooldown = 0
         this.projectiles = []
         this.enemies = []
         this.tick = 0
@@ -43,22 +44,28 @@ class Game {
     }
 
     turnRight() {
-        this.playerTrack += 1
-        if(this.playerTrack >= this.maxTracks) {
-            this.playerTrack = 0
+        if(this.playerMoveCooldown === 0){
+            this.playerMoveCooldown = secondsToTicks(this.intervalBetweenPlayerMovement)
+            this.playerTrack += 1
+            if(this.playerTrack >= this.maxTracks) {
+                this.playerTrack = 0
+            }
         }
     }
 
     turnLeft() {
-        this.playerTrack -= 1
-        if(this.playerTrack < 0) {
-            this.playerTrack = this.maxTracks - 1
+        if(this.playerMoveCooldown === 0){
+            this.playerMoveCooldown = secondsToTicks(this.intervalBetweenPlayerMovement)
+            this.playerTrack -= 1
+            if(this.playerTrack < 0) {
+                this.playerTrack = this.maxTracks - 1
+            }
         }
     }
 
     shoot() {
         if(this.playerShotCooldown === 0) {
-            this.playerShotCooldown = secondsToTicks(this.shotInterval)
+            this.playerShotCooldown = secondsToTicks(this.intervalBetweenShots)
             let newProjectile = {
                 track: this.playerTrack,
                 position: 0,
@@ -79,6 +86,14 @@ class Game {
     }
 
     _gameTick() {
+        if(this.playerShotCooldown > 0){
+            this.playerShotCooldown -= 1
+        }
+
+        if(this.playerMoveCooldown > 0){
+            this.playerMoveCooldown -= 1
+        }
+
         let speed = this.projectileSpeed
 
         this.projectiles = this.projectiles.map(
@@ -121,8 +136,40 @@ class Game {
         this.playerLives = lives
         this.tick += 1
     }
+}
 
+const randomBetween = (min, max) => {
+    return Math.round(min + (Math.random() * (max - min)))
+}
 
+const HighOrderGame = () => {
+    let game = new Game()
+    let interval = null
+    let spawnCounter = 0
+    let r = [25,75]
+
+    let nextSpawn = randomBetween(r[0], r[1])
+    let nextTrack = randomBetween(0, game.maxTracks - 1)
+    let nextSpeed = 1 / secondsToTicks(randomBetween(3, 6))
+
+    const handler = () => {
+        game._gameTick()
+        if(game.playerLives <= 0) {
+            return clearInterval(interval)
+        }
+        if(game.tick === nextSpawn) {
+            game.spawnEnemy(nextTrack, nextSpeed)
+
+            nextSpawn += randomBetween(r[0], r[1])
+            nextTrack = randomBetween(0, game.maxTracks - 1)
+            nextSpeed = 1 / secondsToTicks(randomBetween(3, 6))
+        }
+    }
+    game.start = _ => {
+        interval = setInterval(handler, 1000 / TICKS_PER_SECOND)
+    }
+    return game
 }
 
 module.exports = Game
+module.exports.HigherOrder = HighOrderGame
