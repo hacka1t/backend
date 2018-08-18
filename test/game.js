@@ -128,7 +128,7 @@ function gameTickTests() {
             console.error(e)
         }
     }
-    // shouldIncrementTick()
+    shouldIncrementTick()
 
     function shouldMoveProjectiles() {
         console.log("  Should change projectile positions")
@@ -145,7 +145,7 @@ function gameTickTests() {
             console.error(e)
         }
     }
-    // shouldMoveProjectiles()
+    shouldMoveProjectiles()
 
     function shouldRemoveOutOfBoundsProjectile() {
         console.log("  Should remove the out of bounds projectile from the array")
@@ -160,7 +160,7 @@ function gameTickTests() {
             console.error(e)
         }
     }
-    // shouldRemoveOutOfBoundsProjectile()
+    shouldRemoveOutOfBoundsProjectile()
 
     function shouldMoveEnemies() {
         console.log("  Should move the enemy")
@@ -175,7 +175,7 @@ function gameTickTests() {
             console.error(e)
         }
     }
-    // shouldMoveEnemies()
+    shouldMoveEnemies()
 
 
     function shouldRemoveEnemiesThatHitThePlayer() {
@@ -193,7 +193,7 @@ function gameTickTests() {
             console.error(e)
         }
     }
-    // shouldRemoveEnemiesThatHitThePlayer()
+    shouldRemoveEnemiesThatHitThePlayer()
 
     function shouldRemoveEnemiesAndProjectilesOnHit() {
         console.log("  Should remove enemies and projectiles when hit, also increment player score")
