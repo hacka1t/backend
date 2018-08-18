@@ -2,12 +2,12 @@ const TICKS_PER_SECOND = 50
 const secondsToTicks = seconds => Math.round(seconds * TICKS_PER_SECOND)
 
 class Game {
-    constructor(tracks = 8, shotInterval = 0.2, maxLives = 3) {
+    constructor(tracks = 8, shotInterval = 0.3, maxLives = 3) {
         this.maxTracks = tracks
         this.maxLives = maxLives
         this.intervalBetweenShots = shotInterval
         this.intervalBetweenPlayerMovement = 0.1
-        this.projectileSpeed = 2 / TICKS_PER_SECOND
+        this.projectileSpeed = 1.6 / TICKS_PER_SECOND
 
         this.playerLives = maxLives
         this.playerTrack = 0
@@ -142,15 +142,29 @@ const randomBetween = (min, max) => {
     return Math.round(min + (Math.random() * (max - min)))
 }
 
+const MIN_DIFFICULTY = [[25,75], [3, 6]]
+const MAX_DIFFICULTY = [[10,30], [1.4, 2.8]]
+const SCORE_FOR_HARDEST = 75
+
+const nextParameters = (currentScore) => {
+    const diffModifier = Math.max(SCORE_FOR_HARDEST - currentScore, 0)/SCORE_FOR_HARDEST
+    let p1 = MAX_DIFFICULTY[0][0] + diffModifier * (MIN_DIFFICULTY[0][0] - MAX_DIFFICULTY[0][0])
+    let p2 = MAX_DIFFICULTY[0][1] + diffModifier * (MIN_DIFFICULTY[0][1] - MAX_DIFFICULTY[0][1])
+    let p3 = MAX_DIFFICULTY[1][0] + diffModifier * (MIN_DIFFICULTY[1][0] - MAX_DIFFICULTY[1][0])
+    let p4 = MAX_DIFFICULTY[1][1] + diffModifier * (MIN_DIFFICULTY[1][1] - MAX_DIFFICULTY[1][1])
+
+    return [[p1, p2], [p3, p4]]
+}
+
 const HighOrderGame = () => {
     let game = new Game()
     let interval = null
     let spawnCounter = 0
-    let r = [25,75]
 
-    let nextSpawn = randomBetween(r[0], r[1])
+    let params = nextParameters(game.score)
+    let nextSpawn = randomBetween(params[0][0], params[0][1])
     let nextTrack = randomBetween(0, game.maxTracks - 1)
-    let nextSpeed = 1 / secondsToTicks(randomBetween(3, 6))
+    let nextSpeed = 1 / secondsToTicks(randomBetween(params[1][0], params[1][1]))
 
     const handler = () => {
         game._gameTick()
@@ -159,10 +173,10 @@ const HighOrderGame = () => {
         }
         if(game.tick === nextSpawn) {
             game.spawnEnemy(nextTrack, nextSpeed)
-
-            nextSpawn += randomBetween(r[0], r[1])
+            params = nextParameters(game.score)
+            nextSpawn += randomBetween(params[0][0], params[0][1])
             nextTrack = randomBetween(0, game.maxTracks - 1)
-            nextSpeed = 1 / secondsToTicks(randomBetween(3, 6))
+            nextSpeed = 1 / secondsToTicks(randomBetween(params[1][0], params[1][1]))
         }
     }
     game.start = _ => {
